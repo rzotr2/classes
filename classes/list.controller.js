@@ -6,13 +6,7 @@ import { DomManipulator } from './dom-manipulator.js';
   Here you will add general logic by using methods of your helper classes together
 */
 export class ListController extends ControllerAbstract {
-  constructor() {
-    /*
-      Pass your dependencies here
-      For ex:
-        restService,
-        store,
-    */
+  constructor(restService) {
     super(
       // There's a lot going on under the hood, but skip that part for now
       [
@@ -39,28 +33,20 @@ export class ListController extends ControllerAbstract {
       new DomManipulator({ attachTo: 'app', tag: 'ul' })
     );
 
-    /*
-      Add your dependencies here
-      For ex:
-        this.restService = restService;
-    */
+    this.restService = restService;
   }
 
   loadAll() {
-    // Rendering sample
-    this.domManipulator.renderList([
-      { id: 'randomId', name: 'Oleg' },
-      { id: 'randomId2', name: 'Joka' },
-      { id: 'randomId3', name: 'Boka' },
-    ]);
-
-    // Load list of items from server and render
+    this.restService
+      .getAll()
+      .then((entityList) => this.domManipulator.renderList(entityList));
   }
 
   loadOne(event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
+    const entityId = formData.get('id');
 
     // Load item from server and render
   }

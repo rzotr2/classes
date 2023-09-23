@@ -2,6 +2,7 @@
 import './style.css';
 
 import { ListController } from './classes/list.controller.js';
+import restService from './classes/rest.service.js';
 
 // App initialization
-new ListController();
+new ListController(restService);
