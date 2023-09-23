@@ -6,10 +6,14 @@ import { DomManipulator } from './dom-manipulator.js';
   Here you will add general logic by using methods of your helper classes together
 */
 export class ListController extends ControllerAbstract {
-  constructor(restService) {
+  constructor(restService, generalUtilsService) {
     super(
       // There's a lot going on under the hood, but skip that part for now
       [
+        {
+          id: 'create-form',
+          events: [{ name: 'submit', method: 'create' }],
+        },
         {
           id: 'load-one-form',
           events: [{ name: 'submit', method: 'loadOne' }],
@@ -22,10 +26,7 @@ export class ListController extends ControllerAbstract {
           id: 'remove-form',
           events: [{ name: 'submit', method: 'remove' }],
         },
-        {
-          id: 'load-all-btn',
-          events: [{ name: 'click', method: 'loadAll' }],
-        },
+        
       ],
 
       // DomManipulator is already available via "this",
@@ -34,6 +35,19 @@ export class ListController extends ControllerAbstract {
     );
 
     this.restService = restService;
+    this.generalUtilsService = generalUtilsService;
+
+    this.loadAll();
+  }
+
+  create(event) {
+    event.preventDefault();
+
+    const entity = this.generalUtilsService.getFormData(event.target);
+
+    this.restService
+      .create(entity)
+      .then((createdEntity) => this.domManipulator.addElement(createdEntity));
   }
 
   loadAll() {
@@ -45,8 +59,9 @@ export class ListController extends ControllerAbstract {
   loadOne(event) {
     event.preventDefault();
 
-    const formData = new FormData(event.target);
-    const entityId = formData.get('id');
+    const entity = this.generalUtilsService.getFormData(event.target);
+
+    this.restService.getOne(entity.id).then(loadedEntity => this.domManipulator.addElement(loadedEntity));
 
     // Load item from server and render
   }
@@ -54,15 +69,23 @@ export class ListController extends ControllerAbstract {
   update(event) {
     event.preventDefault();
 
-    const formData = new FormData(event.target);
+    const entity = this.generalUtilsService.getFormData(event.target);
 
-    // Update item on server and update DOM
+    this.restService
+      .update(entity)
+      .then((updatedEntity) =>
+        this.domManipulator.updateElement(updatedEntity)
+      );
   }
 
   remove(event) {
     event.preventDefault();
 
-    const formData = new FormData(event.target);
+    const entity = this.generalUtilsService.getFormData(event.target);
+
+    this.restService
+      .remove(entity.id)
+      .then(() => this.domManipulator.removeElement(entity.id));
 
     // Remove item both on server and in DOM
   }

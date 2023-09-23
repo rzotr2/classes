@@ -31,8 +31,9 @@ export class DomManipulator extends DomManipulatorAbstract {
   }
 
   // Method, which updates one li element's contents by id
-  updateElement(id, payload) {
-    const elementToUpdate = this.findElementById(id);
+  updateElement(payload) {
+    console.log(payload);
+    const elementToUpdate = this.findElementById(payload.id);
 
     elementToUpdate.innerText = `Name: ${payload.name}`;
   }

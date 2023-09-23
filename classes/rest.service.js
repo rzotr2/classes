@@ -17,7 +17,7 @@ class RestService {
   }
 
   create(payload) {
-    return this._httpClient.post(this._getBaseUrlWithId(payload.id), payload);
+    return this._httpClient.post(this._baseUrl, payload);
   }
 
   update(payload) {
@@ -25,7 +25,7 @@ class RestService {
   }
 
   remove(id) {
-    return this._httpClient.delete(id);
+    return this._httpClient.delete(this._getBaseUrlWithId(id));
   }
 }
 
